@@ -129,7 +129,7 @@ class LogixFile(QWidget):
             tmpInputData = inputData.split()
             self.ControllerName = self.getName("CONTROLLER", tmpInputData)
 
-        if inputData.find("Version ") == 0:
+        if inputData.find("Versionn ") == 0:
             if inputData.find("v") >= 0:
                 self.L5KVersion = inputData[inputData.find("v")+1:len(inputData)]
 
