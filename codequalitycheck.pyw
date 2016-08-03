@@ -413,12 +413,16 @@ class MainWindow(QMainWindow):
         # fname = QFileDialog.getOpenFileName(self, "QC - Choose L5K", dir, "L5K files ({})".format(formats))
         # if fname:
         #     self.loadFile(fname)
-        lgxCtrl.main()
 
         if lgxCtrl.ControllerName:
             self.updateStatus(lgxCtrl.ControllerName)
             self.updateStatus(lgxCtrl.L5KVersion)
 
+            for index in lgxCtrl.LgxProgram:
+                self.updateStatus(index.Name)
+
+        elif os.path.basename(lgxCtrl.FilePath) == "":
+            self.updateStatus("No file selected")
 
 
     def loadFile(self, fname=None):

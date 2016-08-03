@@ -9,6 +9,9 @@
 import os
 import platform
 import sys
+from win32api import NameCanonicalEx
+import copy
+
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
@@ -27,21 +30,40 @@ class ControllerType(object):
     TagEnd=None
     RawSize=None
     NumTags=None
-    Tags = []             #0=tag name, 1=tag alias, 2=datatype, 3=producer
+    Tags=[]             #0=tag name, 1=tag alias, 2=datatype, 3=producer
+
+class RoutineType(object):
+    Name=None                  #Name of Routine
+    RtnType=None               #Type Of Routine
+    Start=None                 #Start of Routine
+    End=None                   #End Of Routine
+
+
+class ProgType(object):
+    Name=None
+    ProgramType=None
+    Scheduled=None
+    Tags=[]
+    Routines=[]
+    Start=None
+    End=None
+    NumRoutines=None    #Number of Routines
+    NumTags=None
+    TagStart=None
+    TagEnd=None
 
 class LogixFile(QWidget):
-
-    def __init__(self, parent=None):
-        super(LogixFile, self).__init__()
-
-        self.Ctrl = ControllerType()
-
     ##############################################################################
     # This routine is called when an LogixFileClass class is being created.  It
     # will set the default values for the class, then call OpenFile.  Once OpenFile
     # is complete it will assign Controller information to the Crtl structure.
     ##############################################################################
-    def main(self):
+    def __init__(self, parent=None):
+        super(LogixFile, self).__init__()
+
+        self.Ctrl = ControllerType()
+        self.LocalProgram = ProgType()
+        self.LgxProgram = []
 
         self.Ctrl.NumPrograms = 0
         self.Ctrl.NumDataTypes = 0
@@ -51,6 +73,8 @@ class LogixFile(QWidget):
         self.Ctrl.NumTags = 0
         self.ControllerName = ""
         self.L5KVersion = ""
+
+        self.StartProgram = False
 
         self.MaxRawFile = 500000
         self.MaxPrograms = 100
@@ -62,13 +86,16 @@ class LogixFile(QWidget):
 
         self.openFile()
 
-        self.Ctrl.Name = self.ControllerName
-        self.Ctrl.RawSize = self.RawSize
-        self.Ctrl.FilePath = self.FilePath
-        #self.Ctrl.tmpfile = self.tmpfile
-        self.Ctrl.RSfile = self.RSfile
-        self.Ctrl.L5KVersion = self.L5KVersion
-        #print(self.RSfile)
+        if os.path.basename(self.FilePath) != "":               #if a file is selected from the open file dialog box
+            self.Ctrl.Name = self.ControllerName
+            self.Ctrl.RawSize = self.RawSize
+            self.Ctrl.FilePath = self.FilePath
+            #self.Ctrl.tmpfile = self.tmpfile
+            self.Ctrl.RSfile = self.RSfile
+            self.Ctrl.L5KVersion = self.L5KVersion
+            #print(self.RSfile)
+
+
 
     ##############################################################################
     # This routine is called from the Main routine.  It will open the L5K file,
@@ -81,38 +108,37 @@ class LogixFile(QWidget):
         #choosefile = QFileDialog()
         # Get file path
         self.FilePath = QFileDialog.getOpenFileName(self, "QC - Choose L5K", directory, "L5K files ({})".format(formats))
-        if self.FilePath:
+        if os.path.basename(self.FilePath) != "":
             #print(self.FilePath)
             # Extract Filename from Filepath
             self.RSfile = os.path.basename(self.FilePath)
             #print(os.path.basename(filepath))
 
-        exception = None
-        fh = None
+            exception = None
+            fh = None
 
-        self.RawSize = 0
+            self.RawSize = 0
 
-        try:
-            for inputData in open(self.RSfile, "rU", encoding="utf-8"):
-                if not inputData:
-                    continue
+            try:
+                for inputData in open(self.RSfile, "rU", encoding="utf-8"):
+                    if not inputData:
+                        continue
 
-                # strip all unwanted leading and trailing chars
-                tempstr = inputData.strip(' \t\n\r')
+                    # strip all unwanted leading and trailing chars
+                    tempstr = inputData.strip(' \t\n\r')
 
-                self.parseData(tempstr, self.RawSize)
-                #self.updateStatus(inputData)
+                    self.parseData(tempstr, self.RawSize)
+                    #self.updateStatus(inputData)
 
-                self.RawSize += 1
+                    self.RawSize += 1
 
-        except IOError as e:
-            exception = e
-        finally:
-            if fh is not None:
-                fh.close()
-            if exception is not None:
-                raise exception
-
+            except IOError as e:
+                exception = e
+            finally:
+                if fh is not None:
+                    fh.close()
+                if exception is not None:
+                    raise exception
 
         # Create Tree
         #self.loadFile(fname)
@@ -125,17 +151,41 @@ class LogixFile(QWidget):
     ##############################################################################
     def parseData(self, inputData, Position):
 
+
+
         if inputData.find("CONTROLLER ") == 0:
-            tmpInputData = inputData.split()
-            self.ControllerName = self.getName("CONTROLLER", tmpInputData)
+            self.ControllerName = self.getName("CONTROLLER", inputData.split())
 
         if inputData.find("Version ") == 0:
             if inputData.find("v") >= 0:
                 self.L5KVersion = inputData[inputData.find("v")+1:len(inputData)]
 
         if inputData.find("PROGRAM ") == 0:
-            tmpInputData = inputData.split()
-            self.ControllerName = self.getName("PROGRAM", tmpInputData)
+            self.LocalProgram.Name = self.getName("PROGRAM", inputData.split())
+            self.LocalProgram.Scheduled = False
+            self.LocalProgram.Start = Position
+            self.StartProgram = True
+            self.LocalProgram.NumRoutines = 0
+            self.LocalProgram.NumTags = 0
+
+        if self.StartProgram:
+            if self.LocalProgram.ProgramType == "":
+                self.LocalProgram.ProgramType = self.GetProgramType(inputData, self.LocalProgram.Name)
+                if self.LocalProgram.ProgramType == "FaultHandler":
+                    self.LocalProgram.Scheduled = True
+
+        if inputData.find("END_PROGRAM") == 0 and self.StartProgram:
+            self.LocalProgram.End = Position
+            self.StartProgram = False
+            self.LgxProgram.append(copy.copy(self.LocalProgram))        # use 'copy' to avoid creating reference
+            self.Ctrl.NumPrograms += 1
+
+
+
+
+
+
+
 
 
 
@@ -143,8 +193,18 @@ class LogixFile(QWidget):
     # This function is called from the ParseData routine.  It will process the
     # data passed into it and return the Program, Routine, or DataType name.
     ##############################################################################
-
     def getName(self, target, source):
         for i, w in enumerate(source):
             if w == target:
                 return source[i+1]
+
+    ##############################################################################
+    # This function is called from the ParseData routine.  It will process the
+    # data passed into it and return the Program type.
+    #
+    # 28Jul2006 MS - Created earlier, WL documented and cleaned up.
+    ##############################################################################
+    def GetProgramType(inputData, ProgName):
+        ProgType=" "
+
+        return ProgType
