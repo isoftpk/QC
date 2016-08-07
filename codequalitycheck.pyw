@@ -12,6 +12,7 @@
 import os
 import platform
 import sys
+import copy
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 import helpform
@@ -419,7 +420,15 @@ class MainWindow(QMainWindow):
             self.updateStatus(lgxCtrl.L5KVersion)
 
             for index in lgxCtrl.LgxProgram:
-                self.updateStatus(index.Name)
+                self.updateStatus("{}, Start={}, End={}".format(index.Name, index.Start, index.End ))
+
+            for ptask in lgxCtrl.LgxTask:
+                self.updateStatus("BEGIN TASK")
+                self.updateStatus(ptask.Name)
+                for pprog in ptask.Program:
+                    self.updateStatus(pprog)
+                self.updateStatus("END TASK")
+                self.updateStatus("")
 
         elif os.path.basename(lgxCtrl.FilePath) == "":
             self.updateStatus("No file selected")

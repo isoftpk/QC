@@ -1,27 +1,27 @@
-Australia*(No State)*Adelaide*Dove Traceroute Gateway*Apache/1.3.6*203.15.24.1
-Australia*(No State)*Kenwick*Escape Net*Apache/1.1.1*203.25.185.2
-Australia*(No State)*(Unknown City)*Telstra Net*Apache/1.3.9*210.8.232.2
-Australia*(No State)*(Unknown City)*Telstra Net*Apache/1.3.9*210.8.224.2
-Australia*(No State)*(Unknown City)*Cyberlink Accsess Systems*Apache/1.3b5*203.24.198.1
-Australia*(No State)*Flagstaff Hill*South Australia's Largest ISP*WN/2.0.6*203.11.90.240
-Australia*(No State)*(Unknown City)*Satori Traceroute gateway*Apache/1.3.9*203.21.11.200
-Australia*(No State)*Brisbane*Brisbane Internet Technology*Apache/1.3.3*203.18.94.3
-Australia*(No State)*(Unknown City)*NSW Regional Network Organisation*Apache/1.3.3*203.15.123.114
-Austria*(No State)*Vienna*Telecom*Netscape-FastTrack/3.01*194.118.1.130
-Austria*(No State)*Vienna*AT Net*Roxen·Challenger/1.3.111*62.116.33.47
-Austria*(No State)*(Unknown City)*ISP Austria*Apache/1.2.4*195.58.162.92
-Belgium*(No State)*(Unknown City)*Belgian Research Network*Apache/1.3.3*193.190.198.13
-Belgium*(No State)*(Unknown City)*Intersight*Microsoft-IIS/3.0*193.121.16.55
-Brazil*(No State)*Sao Paulo*Rede Internet Minas*Apache/1.3.9*200.19.159.9
-Bulgaria*(No State)*Sofia*Lirex Looking Glass*Apache/1.3.3*194.12.224.34
-Canada*(No State)*Sherwood Park*David's Net-Presence*Apache/1.3.9*204.209.9.33
-Canada*(No State)*Prince George*Mag-Net Internet*Apache/1.3.9*207.102.83.2
-Canada*(No State)*Echo Online*University of Toronto Toronto*Apache/1.3.11*205.189.151.6
-Canada*(No State)*Ottawa*Carleton University*Apache/1.2.4*134.117.14.93
-Czech Republic*(No State)*Praha*CZECH-NET*Apache/1.3.6*194.213.224.29
-Czech Republic*(No State)*Frydek-Mistek*Traceroute AppleT.cz*Apache/1.3.9*212.71.150.6
-Denmark*(No State)*Tranbjerg*Teledenmark Erhverv Data Divisionen*Apache/1.2b8*193.162.146.38
-Denmark*(No State)*Lyngby*Niels Bohr Institute*CERN/3.0*130.225.212.55
+MCP*(No State)*Adelaide*Dove Traceroute Gateway*Apache/1.3.6*203.15.24.1
+MCP*(No State)*Kenwick*Escape Net*Apache/1.1.1*203.25.185.2
+MCP*(No State)*(Unknown City)*Telstra Net*Apache/1.3.9*210.8.232.2
+MCP*(No State)*(Unknown City)*Telstra Net*Apache/1.3.9*210.8.224.2
+MCP*(No State)*(Unknown City)*Cyberlink Accsess Systems*Apache/1.3b5*203.24.198.1
+MCP*(No State)*Flagstaff Hill*South MCP's Largest ISP*WN/2.0.6*203.11.90.240
+MCP*(No State)*(Unknown City)*Satori Traceroute gateway*Apache/1.3.9*203.21.11.200
+MCP*(No State)*Brisbane*Brisbane Internet Technology*Apache/1.3.3*203.18.94.3
+MCP*(No State)*(Unknown City)*NSW Regional Network Organisation*Apache/1.3.3*203.15.123.114
+AD010Cell*(No State)*Vienna*Telecom*Netscape-FastTrack/3.01*194.118.1.130
+AD010Cell*(No State)*Vienna*AT Net*Roxen·Challenger/1.3.111*62.116.33.47
+AD010Cell*(No State)*(Unknown City)*ISP AD010Cell*Apache/1.2.4*195.58.162.92
+AD010*(No State)*(Unknown City)*Belgian Research Network*Apache/1.3.3*193.190.198.13
+AD010*(No State)*(Unknown City)*Intersight*Microsoft-IIS/3.0*193.121.16.55
+AD030*(No State)*Sao Paulo*Rede Internet Minas*Apache/1.3.9*200.19.159.9
+AD040*(No State)*Sofia*Lirex Looking Glass*Apache/1.3.3*194.12.224.34
+AD050*(No State)*Sherwood Park*David's Net-Presence*Apache/1.3.9*204.209.9.33
+AD050*(No State)*Prince George*Mag-Net Internet*Apache/1.3.9*207.102.83.2
+AD050*(No State)*Echo Online*University of Toronto Toronto*Apache/1.3.11*205.189.151.6
+AD050*(No State)*Ottawa*Carleton University*Apache/1.2.4*134.117.14.93
+AD070*(No State)*Praha*AD070-NET*Apache/1.3.6*194.213.224.29
+AD070*(No State)*Frydek-Mistek*Traceroute AppleT.cz*Apache/1.3.9*212.71.150.6
+AD085*(No State)*Tranbjerg*Teledenmark Erhverv Data Divisionen*Apache/1.2b8*193.162.146.38
+AD085*(No State)*Lyngby*Niels Bohr Institute*CERN/3.0*130.225.212.55
 Estonia*(No State)*Tallinn*MicroLink Online*Apache/1.1.1*194.106.96.6
 Estonia*(No State)*Tallinn*Estonia-Wide Web*Apache/1.3.6*212.107.32.146
 Estonia*(No State)*Tallinn*Estonian Telephone Company*Apache/1.3.6*194.126.101.67

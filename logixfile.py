@@ -52,6 +52,12 @@ class ProgType(object):
     TagStart=None
     TagEnd=None
 
+class TaskType(object):
+    Name=None
+    Program=[]
+
+
+
 class LogixFile(QWidget):
     ##############################################################################
     # This routine is called when an LogixFileClass class is being created.  It
@@ -64,6 +70,8 @@ class LogixFile(QWidget):
         self.Ctrl = ControllerType()
         self.LocalProgram = ProgType()
         self.LgxProgram = []
+        self.LocalTask = TaskType()
+        self.LgxTask = []
 
         self.Ctrl.NumPrograms = 0
         self.Ctrl.NumDataTypes = 0
@@ -75,6 +83,7 @@ class LogixFile(QWidget):
         self.L5KVersion = ""
 
         self.StartProgram = False
+        self.StartTask = False
 
         self.MaxRawFile = 500000
         self.MaxPrograms = 100
@@ -151,8 +160,6 @@ class LogixFile(QWidget):
     ##############################################################################
     def parseData(self, inputData, Position):
 
-
-
         if inputData.find("CONTROLLER ") == 0:
             self.ControllerName = self.getName("CONTROLLER", inputData.split())
 
@@ -168,21 +175,36 @@ class LogixFile(QWidget):
             self.LocalProgram.NumRoutines = 0
             self.LocalProgram.NumTags = 0
 
-        if self.StartProgram:
-            if self.LocalProgram.ProgramType == "":
+        if self.StartProgram is True:
+            if self.LocalProgram.ProgramType is None:
                 self.LocalProgram.ProgramType = self.GetProgramType(inputData, self.LocalProgram.Name)
                 if self.LocalProgram.ProgramType == "FaultHandler":
                     self.LocalProgram.Scheduled = True
 
-        if inputData.find("END_PROGRAM") == 0 and self.StartProgram:
+        if inputData.find("END_PROGRAM") == 0 and self.StartProgram is True:
             self.LocalProgram.End = Position
             self.StartProgram = False
             self.LgxProgram.append(copy.copy(self.LocalProgram))        # use 'copy' to avoid creating reference
             self.Ctrl.NumPrograms += 1
 
+        # find the Task Schedules and the Program Schedule Order to Sort the
+        # above List into the correct order
+        if inputData.find("TASK ") == 0:
+            self.LocalTask.Name = self.getName("TASK", inputData.split())
+            self.StartTask = True
 
+        # adds the correct order of the Task Programs to the Task List
+        if self.StartTask is True:
+            for prog in self.LgxProgram:
+                if inputData.find(prog.Name+";") == 0:
+                    self.LocalTask.Program.append(copy.copy(prog.Name))
 
-
+        # end processing of the current task
+        if inputData.find("END_TASK") == 0 and self.StartTask is True:
+            self.LgxTask.append(copy.copy(self.LocalTask))
+            # declare new Task List (avoids old List reference issue)
+            self.LocalTask.Program = []
+            self.StartTask = False
 
 
 
@@ -204,7 +226,45 @@ class LogixFile(QWidget):
     #
     # 28Jul2006 MS - Created earlier, WL documented and cleaned up.
     ##############################################################################
-    def GetProgramType(inputData, ProgName):
-        ProgType=" "
+    def GetProgramType(self, inputData, ProgName):
+
+        tempData = inputData
+
+        if tempData.find("PROGRAM FaultHandler") >= 0:
+           return "FaultHandler"
+
+        if tempData.find("SL : zp_SLInternals") >= 0:
+           return "Station"
+
+        if tempData.find("Rbt : zp_Robot") >= 0:
+           return "Robot"
+
+        if tempData.find("C : zp_CFlex") >= 0:
+           return "CFlex"
+
+        if tempData.find("SCR1 : zp_SCRInternals") >= 0:
+           return "Weld"
+
+        if tempData.find("zRemControl : zp_ControlRemInternals") >= 0:
+           return "Cell"
+
+        if tempData.find("Class := Safety") >= 0:
+           return "Safety"
+
+        if tempData.find("From1stHMI OF") >= 0:
+           return "Station"
+
+        if tempData.find("ScnSelect : zh_HMIScnSelect") >= 0:
+           return "HMI"
+
+        if tempData.find("END_PROGRAM") >= 0:
+            if ProgName.find("Cell") >= 0:
+                return "Cell"
+            if ProgName.find("HMI") >= 0:
+                return "HMI"
+            if ProgName.find("Sta") >= 0:
+                return "Station"
+
+
 
         return ProgType
